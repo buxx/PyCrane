@@ -13,17 +13,27 @@ class Core(Flask):
         :return:
         """
         self._build_app_resources()
+        self._build_host_resources()
         # TODO: host resources,
         # /host/<host_name
         # /host/<host_name>/containers
         #  etc
 
     def _build_app_resources(self):
+        # Class are loaded here because they needs Supervisor instantiation
         from PyCrane.resource.AppList import AppList
         from PyCrane.resource.App import App
 
         self._api.add_resource(App, '/app/<app_name>')
         self._api.add_resource(AppList, '/app')
+
+    def _build_host_resources(self):
+        # Class are loaded here because they needs Supervisor instantiation
+        from PyCrane.resource.HostList import HostList
+        from PyCrane.resource.Host import Host
+
+        self._api.add_resource(Host, '/host/<host_name>')
+        self._api.add_resource(HostList, '/host')
 
     def get_response(self, content: dict, code=200, request_errors=[]):
         server_errors = self._get_server_errors()
@@ -34,7 +44,7 @@ class Core(Flask):
             'server': {
                 'errors': server_errors
             },
-            'content': content
+            'response': content
         }, code
 
     def get_404_response(self, message):

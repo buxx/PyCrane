@@ -1,7 +1,7 @@
 from PyCrane.exception import ConfigurationException
 
 
-class Model:
+class Model(object):
 
     _dict_fields = []
 
@@ -10,7 +10,7 @@ class Model:
             attr_name = '_' + name[4:]
             if hasattr(self, attr_name):
                 return lambda: getattr(self, attr_name)
-        return super().__getattr__(name)
+        raise AttributeError("Unkmow model attribute '%s'" % (str(name)))
 
     def to_dict(self):
         if not self._dict_fields:

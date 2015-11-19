@@ -1,6 +1,6 @@
 from PyCrane.exception import ConfigurationException
-from PyCrane.app.App import App
-from PyCrane.host.Host import Host
+from PyCrane.model.App import App
+from PyCrane.model.Host import Host
 
 
 class Supervisor:

@@ -1,4 +1,4 @@
-from PyCrane.app.Model import Model
+from PyCrane.model.Model import Model
 
 
 class App(Model):
