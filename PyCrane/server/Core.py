@@ -20,20 +20,22 @@ class Core(Flask):
         #  etc
 
     def _build_app_resources(self):
-        # Class are loaded here because they needs Supervisor instantiation
+        # Class are loaded here because they needs Supervisor singleton
         from PyCrane.resource.AppList import AppList
         from PyCrane.resource.App import App
 
-        self._api.add_resource(App, '/app/<app_name>')
         self._api.add_resource(AppList, '/app')
+        self._api.add_resource(App, '/app/<app_name>')
 
     def _build_host_resources(self):
-        # Class are loaded here because they needs Supervisor instantiation
+        # Class are loaded here because they needs Supervisor singleton
         from PyCrane.resource.HostList import HostList
         from PyCrane.resource.Host import Host
+        from PyCrane.resource.HostCommand import HostCommand
 
-        self._api.add_resource(Host, '/host/<host_name>')
         self._api.add_resource(HostList, '/host')
+        self._api.add_resource(Host, '/host/<host_name>')
+        self._api.add_resource(HostCommand, '/host/<host_name>/<command_name>')
 
     def get_response(self, content: dict, code=200, request_errors=[]):
         server_errors = self._get_server_errors()
