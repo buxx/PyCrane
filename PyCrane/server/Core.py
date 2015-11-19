@@ -47,9 +47,9 @@ class Core(Flask):
             'response': content
         }, code
 
-    def get_404_response(self, message):
+    def get_error_response(self, message, code=500):
         request_errors = [{'message': message}]
-        return self.get_response('', 404, request_errors)
+        return self.get_response('', code, request_errors)
 
     def _get_server_errors(self):
         """

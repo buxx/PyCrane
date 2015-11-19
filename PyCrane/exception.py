@@ -12,3 +12,7 @@ class DisplayableException(PyCraneException):
 
 class ConfigurationException(FatalException):
     pass
+
+
+class NotFound(DisplayableException):
+    pass

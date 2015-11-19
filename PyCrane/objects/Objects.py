@@ -1,4 +1,4 @@
-from PyCrane.exception import ConfigurationException, DisplayableException
+from PyCrane.exception import ConfigurationException, NotFound
 
 
 class Objects:
@@ -20,4 +20,4 @@ class Objects:
             if obj.get_name() == name:
                 return obj
 
-        raise DisplayableException("Can't find object for name '%s'" % (name,))
+        raise NotFound("Can't find object for name '%s'" % (name,))
