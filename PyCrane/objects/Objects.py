@@ -6,6 +6,9 @@ class Objects:
     def __init__(self, collection):
         self._collection = collection
 
+    def get_collection(self):
+        return self._collection
+
     def find_one_by_name(self, name: str):
         """
         TODO: Et si plusieurs avec mm name ?

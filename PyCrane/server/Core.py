@@ -1,4 +1,5 @@
 from flask import Flask
+from PyCrane.resource.HostsCommand import HostsCommand
 
 from PyCrane.resource.tools import contextualise_resource
 from PyCrane.server.Api import Api
@@ -23,22 +24,19 @@ class Core(Flask):
         """
         self._build_app_resources()
         self._build_host_resources()
-        # TODO: host resources,
-        # /host/<host_name
-        # /host/<host_name>/containers
-        #  etc
 
     def _contextualise_resource(self, ressource_class):
         return contextualise_resource(ressource_class, self._supervisor)
 
     def _build_app_resources(self):
-        self._api.add_resource(self._contextualise_resource(AppList), '/app')
+        self._api.add_resource(self._contextualise_resource(AppList), '/apps')
         self._api.add_resource(self._contextualise_resource(App), '/app/<app_name>')
 
     def _build_host_resources(self):
-        self._api.add_resource(self._contextualise_resource(HostList), '/host')
+        self._api.add_resource(self._contextualise_resource(HostList), '/hosts')
         self._api.add_resource(self._contextualise_resource(Host), '/host/<host_name>')
         self._api.add_resource(self._contextualise_resource(HostCommand), '/host/<host_name>/<command_name>')
+        self._api.add_resource(self._contextualise_resource(HostsCommand), '/hosts/<command_name>')
 
     def get_response(self, content: dict, code=200, request_errors=[]):
         server_errors = self._get_server_errors()
