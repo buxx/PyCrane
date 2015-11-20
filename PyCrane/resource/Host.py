@@ -1,11 +1,12 @@
 from PyCrane.objects.HostObjects import HostObjects
 from PyCrane.exception import DisplayableException, NotFound
-from PyCrane.resource.Resource import Resource
+from PyCrane.resource.ModelResource import ModelResource
 
 
-class Host(Resource):
+class Host(ModelResource):
 
-    _objects = HostObjects()
+    def _model_collection(self):
+        return HostObjects(self._get_supervisor().get_hosts())
 
     def get(self, host_name):
         try:

@@ -1,16 +1,17 @@
 from PyCrane.model.Host import Host
 from PyCrane.objects.HostObjects import HostObjects
 from PyCrane.exception import DisplayableException, NotFound
-from PyCrane.resource.Resource import Resource
+from PyCrane.resource.ModelResource import ModelResource
 
 
-class HostCommand(Resource):
+class HostCommand(ModelResource):
     """
     TODO: lister les actions (docker-py) qui sont dispo en GET, POST, etc ?
     et ne les autoriser que selon mode
     """
 
-    _objects = HostObjects()
+    def _model_collection(self):
+        return HostObjects(self._get_supervisor().get_hosts())
 
     def _get_host(self, host_name: str) -> Host:
         return self._objects.find_one_by_name(host_name)

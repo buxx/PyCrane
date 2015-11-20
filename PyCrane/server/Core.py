@@ -1,11 +1,20 @@
 from flask import Flask
+
+from PyCrane.resource.tools import contextualise_resource
 from PyCrane.server.Api import Api
+from PyCrane.resource.AppList import AppList
+from PyCrane.resource.App import App
+from PyCrane.resource.HostList import HostList
+from PyCrane.resource.Host import Host
+from PyCrane.resource.HostCommand import HostCommand
 
 
 class Core(Flask):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+
+    def __init__(self, supervisor, *args, **kwargs):
+        super().__init__('PyCrane', *args, **kwargs)  # TODO: Conf import_name ?
         self._api = Api(self)
+        self._supervisor = supervisor
 
     def build_resources(self):
         """
@@ -19,23 +28,17 @@ class Core(Flask):
         # /host/<host_name>/containers
         #  etc
 
-    def _build_app_resources(self):
-        # Class are loaded here because they needs Supervisor singleton
-        from PyCrane.resource.AppList import AppList
-        from PyCrane.resource.App import App
+    def _contextualise_resource(self, ressource_class):
+        return contextualise_resource(ressource_class, self._supervisor)
 
-        self._api.add_resource(AppList, '/app')
-        self._api.add_resource(App, '/app/<app_name>')
+    def _build_app_resources(self):
+        self._api.add_resource(self._contextualise_resource(AppList), '/app')
+        self._api.add_resource(self._contextualise_resource(App), '/app/<app_name>')
 
     def _build_host_resources(self):
-        # Class are loaded here because they needs Supervisor singleton
-        from PyCrane.resource.HostList import HostList
-        from PyCrane.resource.Host import Host
-        from PyCrane.resource.HostCommand import HostCommand
-
-        self._api.add_resource(HostList, '/host')
-        self._api.add_resource(Host, '/host/<host_name>')
-        self._api.add_resource(HostCommand, '/host/<host_name>/<command_name>')
+        self._api.add_resource(self._contextualise_resource(HostList), '/host')
+        self._api.add_resource(self._contextualise_resource(Host), '/host/<host_name>')
+        self._api.add_resource(self._contextualise_resource(HostCommand), '/host/<host_name>/<command_name>')
 
     def get_response(self, content: dict, code=200, request_errors=[]):
         server_errors = self._get_server_errors()

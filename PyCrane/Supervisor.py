@@ -1,48 +1,19 @@
-from PyCrane.exception import ConfigurationException
 from PyCrane.model.App import App
 from PyCrane.model.Host import Host
+from PyCrane.server.Core import Core
 
 
 class Supervisor:
 
-    _instance = None  # type: Supervisor
-    """
-    Used to Supervisor singleton
-    """
-
-    @classmethod
-    def create_instance(cls, core, config: dict, supervisor_class: None):
-        if cls._instance is not None:
-            raise ConfigurationException("Singleton instance already created")
-
-        if not supervisor_class:
-            supervisor_class = cls
-
-        cls._instance = supervisor_class(core, config)
-        return cls._instance
-
-    @classmethod
-    def get_instance(cls):
-        if not cls._instance:
-            raise ConfigurationException("Supervisor singleton not instanced")
-        return cls._instance
-
-    def __init__(self, core, config: dict):
+    def __init__(self, config: dict):
         """
 
-        :param core: Core PyCrane Core
         :param config: dict config TODO: link to doc
         :return:
         """
         self._apps = App.get_apps_from_dict(config['APPS'])
         self._hosts = Host.get_hosts_from_dict(config['HOSTS'])
-        self._core = core
-
-    def build(self):
-        """
-
-        :return:
-        """
+        self._core = Core(self)
         self._core.build_resources()
 
     def set_apps(self, apps: list):  # TODO: type dans liste

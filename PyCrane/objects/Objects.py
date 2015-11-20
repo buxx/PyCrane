@@ -1,14 +1,10 @@
-from PyCrane.exception import ConfigurationException, NotFound
+from PyCrane.exception import NotFound
 
 
 class Objects:
 
-    _collection = None
-
-    def get_collection(self) -> list:
-        if self._collection is None:
-            raise ConfigurationException("Subclass must set model object's")
-        return self._collection
+    def __init__(self, collection):
+        self._collection = collection
 
     def find_one_by_name(self, name: str):
         """
@@ -16,7 +12,7 @@ class Objects:
         :param name:
         :return:
         """
-        for obj in self.get_collection():
+        for obj in self._collection:
             if obj.get_name() == name:
                 return obj
 

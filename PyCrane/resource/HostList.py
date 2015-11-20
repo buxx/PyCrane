@@ -1,10 +1,11 @@
 from PyCrane.objects.HostObjects import HostObjects
-from PyCrane.resource.Resource import Resource
+from PyCrane.resource.ModelResource import ModelResource
 
 
-class HostList(Resource):
+class HostList(ModelResource):
 
-    _objects = HostObjects()
+    def _model_collection(self):
+        return HostObjects(self._get_supervisor().get_hosts())
 
     def get(self):
         hosts = [host.to_dict() for host in self._objects.get_collection()]
