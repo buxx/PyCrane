@@ -1,8 +1,17 @@
 from flask_restful import Resource as ResourceBase
-from PyCrane.exception import ConfigurationException
+
+from PyCrane.exception import ConfigurationException, NotFound, DisplayableException
 
 
 class Resource(ResourceBase):
+
+    def get(self, *args, **kwargs):
+        try:
+            return self._core.get_response(self._get_content(*args, **kwargs))
+        except NotFound as exc:
+            return self._core.get_error_response(str(exc), 404)
+        except DisplayableException as exc:
+            return self._core.get_error_response(str(exc))
 
     def __init__(self, supervisor, *args, **kwargs):
         super(*args, **kwargs)

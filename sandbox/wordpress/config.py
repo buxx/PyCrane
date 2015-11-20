@@ -1,12 +1,19 @@
 
+IMAGES = [
+    ('debian:jessie', ),  # TODO: un exemple de hub personalisé
+    ('wordpress', )
+]
+
 HOSTS = {
     'HOST_A': {
         'hostname': 'localhost',
-        'socket': 'unix://var/run/docker.sock'
+        'socket': 'unix://var/run/docker.sock',
+        'images': IMAGES
     },
     'HOST_B': {
         'hostname': 'localhost',
-        'socket': 'unix://var/run/docker.sock'
+        'socket': 'unix://var/run/docker.sock',
+        'images': IMAGES
     }
 }
 

@@ -1,9 +1,6 @@
 # PyCharm prject folder
 .idea
 
-# Project datas
-sandbox/wordpress/db.json
-
 # Folloing was created by https://www.gitignore.io/api/python
 
 ### Python ###

@@ -1,13 +1,11 @@
 from flask import Flask
-from PyCrane.resource.HostsCommand import HostsCommand
-
+from PyCrane.resource.HostInstances import HostInstances
 from PyCrane.resource.tools import contextualise_resource
 from PyCrane.server.Api import Api
 from PyCrane.resource.AppList import AppList
 from PyCrane.resource.App import App
 from PyCrane.resource.HostList import HostList
 from PyCrane.resource.Host import Host
-from PyCrane.resource.HostCommand import HostCommand
 
 
 class Core(Flask):
@@ -35,8 +33,10 @@ class Core(Flask):
     def _build_host_resources(self):
         self._api.add_resource(self._contextualise_resource(HostList), '/hosts')
         self._api.add_resource(self._contextualise_resource(Host), '/host/<host_name>')
-        self._api.add_resource(self._contextualise_resource(HostCommand), '/host/<host_name>/<command_name>')
-        self._api.add_resource(self._contextualise_resource(HostsCommand), '/hosts/<command_name>')
+
+        self._api.add_resource(self._contextualise_resource(HostInstances), '/host/<host_name>/instances')
+        # self._api.add_resource(self._contextualise_resource(HostInstantiate), '/host/<host_name>/instantiate/<app_name>')
+        # self._api.add_resource(self._contextualise_resource(Instances), '/instances')
 
     def get_response(self, content: dict, code=200, request_errors=[]):
         server_errors = self._get_server_errors()
