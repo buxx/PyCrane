@@ -4,12 +4,28 @@ from PyCrane.exception import ConfigurationException, NotFound, DisplayableExcep
 
 
 class Resource(ResourceBase):
+    """
+    TODO: Si la resource enfant ne veut pas de post, put , etc: Lister dans ttr de classe et reproduire erreur
+    comme si methode n'existait pas.
+    """
 
     def get(self, *args, **kwargs):
         try:
             return self._core.get_response(self._get_content(*args, **kwargs))
         except NotFound as exc:
             return self._core.get_error_response(str(exc), 404)
+        except DisplayableException as exc:
+            return self._core.get_error_response(str(exc))
+
+    def post(self, *args, **kwargs):
+        try:
+            return self._core.get_response(self._post_content(*args, **kwargs))
+        except DisplayableException as exc:
+            return self._core.get_error_response(str(exc))
+
+    def put(self, *args, **kwargs):
+        try:
+            return self._core.get_response(self._put_content(*args, **kwargs))
         except DisplayableException as exc:
             return self._core.get_error_response(str(exc))
 

@@ -16,3 +16,7 @@ class ConfigurationException(FatalException):
 
 class NotFound(DisplayableException):
     pass
+
+
+class InvalidPost(DisplayableException):
+    pass

@@ -1,5 +1,5 @@
 from flask import Flask
-from PyCrane.resource.HostInstances import HostInstances
+from PyCrane.resource.Instances import Instances
 from PyCrane.resource.tools import contextualise_resource
 from PyCrane.server.Api import Api
 from PyCrane.resource.AppList import AppList
@@ -34,9 +34,11 @@ class Core(Flask):
         self._api.add_resource(self._contextualise_resource(HostList), '/hosts')
         self._api.add_resource(self._contextualise_resource(Host), '/host/<host_name>')
 
-        self._api.add_resource(self._contextualise_resource(HostInstances), '/host/<host_name>/instances')
-        # self._api.add_resource(self._contextualise_resource(HostInstantiate), '/host/<host_name>/instantiate/<app_name>')
-        # self._api.add_resource(self._contextualise_resource(Instances), '/instances')
+        self._api.add_resource(self._contextualise_resource(Instances), '/instances')
+        # GET: List configured images (and list errors of hosts don't have)
+        # POST: sync hosts images (pull needed)
+        #  self._api.add_resource(self._contextualise_resource(Images), '/images')
+
 
     def get_response(self, content: dict, code=200, request_errors=[]):
         server_errors = self._get_server_errors()
