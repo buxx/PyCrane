@@ -36,6 +36,14 @@ class Resource(ResourceBase):
                                                  exc.__class__.__name__,
                                                  content=exc.get_response_content())
 
+    def delete(self, *args, **kwargs):
+        try:
+            return self._core.get_response(self._delete_content(*args, **kwargs))
+        except DisplayableException as exc:
+            return self._core.get_error_response(str(exc),
+                                                 exc.__class__.__name__,
+                                                 content=exc.get_response_content())
+
     def __init__(self, supervisor, *args, **kwargs):
         super(*args, **kwargs)
         self._supervisor = supervisor

@@ -1,5 +1,4 @@
 from PyCrane.objects.AppObjects import AppObjects
-from PyCrane.exception import DisplayableException, NotFound
 from PyCrane.resource.ModelResource import ModelResource
 
 

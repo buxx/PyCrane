@@ -1,32 +1,39 @@
 
-IMAGES = [
-    ('debian:jessie', ),  # TODO: un exemple de hub personalisé
-    ('wordpress', )
+WORDPRESS_4_3_APACHE = 'wordpress:4.3-apache'  # my.registry.io:5000/wordpress:4.3
+MYSQL_5_7 = 'mysql:5.7'
+
+HOSTS_IMAGES = [
+    WORDPRESS_4_3_APACHE,
+    MYSQL_5_7
 ]
 
-HOSTS = {
-    'HOST_A': {
+HOSTS = [
+    {
+        'name': 'HOST_A',
         'hostname': 'localhost',
         'socket': 'unix://var/run/docker.sock',
-        'images': IMAGES
+        'images': HOSTS_IMAGES
     },
-    'HOST_B': {
+    {
+        'name': 'HOST_B',
         'hostname': 'localhost',
         'socket': 'unix://var/run/docker.sock',
-        'images': IMAGES
+        'images': HOSTS_IMAGES
     }
-}
+]
 
-APPS = {
-    'WORDPRESS': {
-        'image': 'TODO',
-        # TODO: methode de deploiement
+APPS = [
+    {
+        'name': 'WORDPRESS_4.3',
+        'image': WORDPRESS_4_3_APACHE,
+        # TODO: methode de deploiement / callback
     },
-    'MYSQL': {
-        'image': 'TODO',
-        # TODO: methode de deploiement
+    {
+        'name': 'MYSQL_5.7',
+        'image': MYSQL_5_7,
+        # TODO: methode de deploiement / callback
     }
-}
+]
 
 wordpress_deployment_config = {
     'HOSTS': HOSTS,

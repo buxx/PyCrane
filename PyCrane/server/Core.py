@@ -1,4 +1,5 @@
 from flask import Flask
+
 from PyCrane.resource.Instances import Instances
 from PyCrane.resource.tools import contextualise_resource
 from PyCrane.server.Api import Api
@@ -40,13 +41,9 @@ class Core(Flask):
         #  self._api.add_resource(self._contextualise_resource(Images), '/images')
 
     def get_response(self, content: dict, http_code=200, request_errors=[]):
-        server_errors = self._get_server_errors()
         return {
             'request': {
                 'errors': request_errors
-            },
-            'server': {
-                'errors': server_errors
             },
             'response': content
         }, http_code

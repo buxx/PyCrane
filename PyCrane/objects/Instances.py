@@ -1,5 +1,7 @@
 from tinydb import Query
+
 from PyCrane.model import Host
+from PyCrane.model.Instance import Instance
 
 
 class Instances:
@@ -9,7 +11,7 @@ class Instances:
         self._instances = Query()
 
     def get_all(self) -> dict:
-        return self._database.all()
+        return [Instance.from_dict(instance_data) for instance_data in self._database.all()]
 
     def find_by_host(self, host: Host) -> dict:
         return self._database.search(self._instances.host == host.get_name())

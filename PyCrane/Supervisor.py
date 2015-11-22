@@ -1,8 +1,7 @@
+from tinydb import TinyDB
 from PyCrane.model.App import App
 from PyCrane.model.Host import Host
-from PyCrane.model.Instances import Instances
 from PyCrane.server.Core import Core
-from tinydb import TinyDB
 
 
 class Supervisor:
@@ -13,8 +12,8 @@ class Supervisor:
         :param config: dict config TODO: link to doc
         :return:
         """
-        self._apps = App.get_apps_from_dict(config['APPS'])
-        self._hosts = Host.get_hosts_from_dict(config['HOSTS'])
+        self._apps = [App.from_dict(app_data) for app_data in config['APPS']]
+        self._hosts = [Host.from_dict(host_data) for host_data in config['HOSTS']]
         self._core = Core(self)
         self._core.build_resources()
         self._db = self._get_database(config)
