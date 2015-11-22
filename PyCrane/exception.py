@@ -7,7 +7,13 @@ class FatalException(PyCraneException):
 
 
 class DisplayableException(PyCraneException):
-    pass
+
+    def __init__(self, *args, response_content=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._response_content = response_content
+
+    def get_response_content(self):
+        return self._response_content
 
 
 class ConfigurationException(FatalException):

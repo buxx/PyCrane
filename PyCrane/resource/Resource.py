@@ -13,21 +13,28 @@ class Resource(ResourceBase):
         try:
             return self._core.get_response(self._get_content(*args, **kwargs))
         except NotFound as exc:
-            return self._core.get_error_response(str(exc), 404)
+            return self._core.get_error_response(str(exc),
+                                                 404)
         except DisplayableException as exc:
-            return self._core.get_error_response(str(exc))
+            return self._core.get_error_response(str(exc),
+                                                 exc.__class__.__name__,
+                                                 content=exc.get_response_content())
 
     def post(self, *args, **kwargs):
         try:
             return self._core.get_response(self._post_content(*args, **kwargs))
         except DisplayableException as exc:
-            return self._core.get_error_response(str(exc))
+            return self._core.get_error_response(str(exc),
+                                                 exc.__class__.__name__,
+                                                 content=exc.get_response_content())
 
     def put(self, *args, **kwargs):
         try:
             return self._core.get_response(self._put_content(*args, **kwargs))
         except DisplayableException as exc:
-            return self._core.get_error_response(str(exc))
+            return self._core.get_error_response(str(exc),
+                                                 exc.__class__.__name__,
+                                                 content=exc.get_response_content())
 
     def __init__(self, supervisor, *args, **kwargs):
         super(*args, **kwargs)

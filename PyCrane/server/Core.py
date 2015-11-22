@@ -14,6 +14,7 @@ class Core(Flask):
         super().__init__('PyCrane', *args, **kwargs)  # TODO: Conf import_name ?
         self._api = Api(self)
         self._supervisor = supervisor
+        self._errors = []
 
     def build_resources(self):
         """
@@ -39,8 +40,7 @@ class Core(Flask):
         # POST: sync hosts images (pull needed)
         #  self._api.add_resource(self._contextualise_resource(Images), '/images')
 
-
-    def get_response(self, content: dict, code=200, request_errors=[]):
+    def get_response(self, content: dict, http_code=200, request_errors=[]):
         server_errors = self._get_server_errors()
         return {
             'request': {
@@ -50,15 +50,36 @@ class Core(Flask):
                 'errors': server_errors
             },
             'response': content
-        }, code
+        }, http_code
 
-    def get_error_response(self, message, code=500):
-        request_errors = [{'message': message}]
-        return self.get_response('', code, request_errors)
+    def get_error_response(self, message, error_name='Error', http_code=400, content=''):
+        request_errors = [{
+            'name': error_name,
+            'message': message
+        }]
+        return self.get_response(content, http_code, request_errors)
+
+    def report_error(self, error_name, error_subject):
+        """
+        TODO: Decrire la structure des erreurs
+        :param error_name:
+        :param error_message:
+        :return:
+        """
+        if error_name not in self._errors:
+            self._errors[error_name] = []
+
+        if error_subject not in self._errors[error_name]:
+            self._errors[error_name].append(error_subject)
+
+    def solve_if_error(self, error_name, error_subject):
+        if error_name in self._errors:
+            if error_subject in self._errors[error_name]:
+                self._errors[error_name].remove(error_subject)
 
     def _get_server_errors(self):
         """
         TODO: do
         :return:
         """
-        return []
+        return self._errors

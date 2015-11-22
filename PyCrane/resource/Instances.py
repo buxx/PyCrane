@@ -23,9 +23,8 @@ class Instances(CommandResource):
         if instance_form.validate():
             self._instances.create(instance_form.data)
         else:
-            # TODO: Donner les champs en erreurs (instance_form.errors)
-            raise InvalidPost()
+            raise InvalidPost('Invalid data provided', response_content=instance_form.errors)
 
-    def _pt_content(self):
+    def _put_content(self):
         # TODO: Les instances doivent avoir un ID (id container?)
-        pass # TODO
+        pass  # TODO
