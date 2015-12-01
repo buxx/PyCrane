@@ -1,22 +1,13 @@
 from flask import request
 from werkzeug.datastructures import MultiDict
-
 from PyCrane.exception import InvalidPost
 from PyCrane.form.InstanceForm import InstanceForm
+from PyCrane.model.Instance import Instance
 from PyCrane.objects.AppObjects import AppObjects
-from PyCrane.objects.Instances import Instances as InstancesModel
-from PyCrane.objects.HostObjects import HostObjects
-from PyCrane.resource.CommandResource import CommandResource
+from PyCrane.resource.InstanceBase import InstanceBase
 
 
-class Instances(CommandResource):
-
-    def __init__(self, supervisor, *args, **kwargs):
-        super().__init__(supervisor, *args, **kwargs)
-        self._instances = InstancesModel(supervisor.get_db())
-
-    def _model_collection(self):
-        return HostObjects(self._get_supervisor().get_hosts())
+class Instances(InstanceBase):
 
     def _get_content(self):
         return [instance.to_dict() for instance in self._instances.get_all()]
@@ -24,10 +15,13 @@ class Instances(CommandResource):
     def _post_content(self):
         request_data = self._complete_request_data(request.form)
         instance_form = InstanceForm(request_data, supervisor=self._get_supervisor())
+        dispatcher = self._get_dispatcher(None)
 
         if instance_form.validate():
-            self._instances.create(instance_form.data)
-            # TODO: Une fois un id donne, retourné l'enregistrement ajouté
+            instance = Instance.from_dict(instance_form.data)
+            self._instances.create(instance.to_dict())  # TODO: Donner Instance plutôt qur dict ?
+            dispatcher.dispatch(instance)
+            return instance.to_dict()
         else:
             raise InvalidPost('Invalid data provided', response_content=instance_form.errors)
 
@@ -45,11 +39,3 @@ class Instances(CommandResource):
             request_data['image'] = [instance_image_name]
 
         return MultiDict(request_data)
-
-    def _put_content(self):
-        # TODO: Les instances doivent avoir un ID (id container?)
-        pass  # TODO
-
-    def _delete_content(self):
-        # TODO: Les instances doivent avoir un ID (id container?)
-        pass  # TODO

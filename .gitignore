@@ -1,8 +1,12 @@
-# PyCharm prject folder
+# PyCharm project folder
 .idea
 
 # Project datas
 sandbox/wordpress/db.json
+sandbox/wordpress/compose*.yml
+
+# Temps files
+*~
 
 # Folloing was created by https://www.gitignore.io/api/python
 

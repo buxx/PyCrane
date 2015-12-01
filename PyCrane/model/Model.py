@@ -10,6 +10,10 @@ class Model:
             attr_name = '_' + name[4:]
             if hasattr(self, attr_name):
                 return lambda: getattr(self, attr_name)
+        if name[0:4] == 'set_':
+            attr_name = '_' + name[4:]
+            if hasattr(self, attr_name):
+                return lambda value: setattr(self, attr_name, value)
         raise AttributeError("Unknown model attribute '%s'" % (str(name)))
 
     @classmethod

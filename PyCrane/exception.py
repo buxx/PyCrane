@@ -26,3 +26,15 @@ class NotFound(DisplayableException):
 
 class InvalidPost(DisplayableException):
     pass
+
+
+class NonFatalDisplayableException(DisplayableException):
+    pass
+
+
+class FatalDisplayableException(DisplayableException):
+    pass
+
+
+class AlreadyRunning(NonFatalDisplayableException):
+    pass

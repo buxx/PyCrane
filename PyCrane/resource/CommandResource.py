@@ -7,7 +7,7 @@ class CommandResource(ModelResource):
 
     def __init__(self, supervisor, *args, **kwargs):
         super().__init__(supervisor, *args, **kwargs)
-        self._command = Command(self._objects.get_collection())
+        self._command = Command(self._objects)
 
     def _model_collection(self):
         return HostObjects(self._get_supervisor().get_hosts())

@@ -1,4 +1,5 @@
 from tinydb import TinyDB
+from PyCrane.command.ComposeForeman import ComposeForeman
 from PyCrane.model.App import App
 from PyCrane.model.Host import Host
 from PyCrane.server.Core import Core
@@ -17,6 +18,7 @@ class Supervisor:
         self._core = Core(self)
         self._core.build_resources()
         self._db = self._get_database(config)
+        self._config = config
 
     def _get_database(self, config):
         return TinyDB('./db.json')  # TODO: config
@@ -38,6 +40,9 @@ class Supervisor:
 
     def get_db(self) -> TinyDB:
         return self._db
+
+    def get_foreman_class(self):
+        return ComposeForeman
 
     def start_server(self):
         # TODO: parametres hos etc en argv
