@@ -21,7 +21,7 @@ HOSTS = [
     {
         'name': 'HOST_A',
         'hostname': 'localhost',
-        'socket': 'http+unix://var/run/docker.sock',  # or tcp://127.0.0.1:xxxx
+        'socket': 'http+unix://var/run/docker.sock',  # or tcp://x.x.x.x:xxxx
     },
     # ...
 ]
