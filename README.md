@@ -6,7 +6,7 @@ A REST access point to control app deployment in docker containers
 
 ## Features
 
-* List, start and stop containers on defined hosts
+* List, create and manage application instances on defined hosts
 
 ## Features TO DO
 
