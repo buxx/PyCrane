@@ -1,15 +1,61 @@
 from flask import request
 from werkzeug.datastructures import MultiDict
-from PyCrane.exception import InvalidPost
-from PyCrane.form.InstanceForm import InstanceForm
-from PyCrane.model.Instance import Instance
-from PyCrane.objects.AppObjects import AppObjects
-from PyCrane.resource.InstanceBase import InstanceBase
-from PyCrane.resource.message import ResponseContent
+
+from PyCrane.exception import NonFatalDisplayableException, InvalidPost
+from PyCrane.form.model import InstanceForm
+from PyCrane.model.app import Instance
+from PyCrane.objects.app import AppObjects
+from PyCrane.resource.base import InstanceBase, ModelResource
+from PyCrane.resource.ModelResource import ModelResource
+from PyCrane.message import ResponseContent, ResponseError
+
+
+class App(ModelResource):
+    def _model_collection(self):
+        return AppObjects(self._get_supervisor().get_apps())
+
+    def _get_content(self, app_name):
+        app = self._objects.find_one_by_name(app_name)
+        return ResponseContent(app.to_dict())
+
+
+class AppList(ModelResource):
+    def _model_collection(self):
+        return AppObjects(self._get_supervisor().get_apps())
+
+    def _get_content(self):
+        return ResponseContent([app.to_dict() for app in self._objects.get_collection()])
+
+
+class Instance(InstanceBase):
+    def _put_content(self, instance_name):
+        instance = self._instances.find_one_by_name(instance_name)
+        dispatcher = self._get_dispatcher(instance)
+        errors = []
+
+        for attr_name in request.form.keys():
+            getattr(instance, 'set_%s' % attr_name)(request.form.get(attr_name))
+
+        self._instances.update(instance)
+
+        try:
+            dispatcher.dispatch(instance)
+        except NonFatalDisplayableException as exc:
+            errors.append(ResponseError('Forced start instance',
+                                        str(exc)))
+
+        return ResponseContent(None, errors=errors)
+
+    def _delete_content(self, instance_name):
+        instance = self._instances.find_one_by_name(instance_name)
+        dispatcher = self._get_dispatcher(instance)
+        instance.set_enabled(False)
+        dispatcher.dispatch(instance)
+        self._instances.delete(instance)
+        return ResponseContent(None)
 
 
 class Instances(InstanceBase):
-
     _inherited_fields = ('image', 'command')
 
     def _get_content(self):

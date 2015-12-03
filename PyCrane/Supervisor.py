@@ -1,12 +1,12 @@
 from tinydb import TinyDB
-from PyCrane.command.ComposeForeman import ComposeForeman
-from PyCrane.model.App import App
-from PyCrane.model.Host import Host
+
+from PyCrane.command.foreman import ComposeForeman
+from PyCrane.model.app import App
+from PyCrane.model.host import Host
 from PyCrane.server.Core import Core
 
 
 class Supervisor:
-
     def __init__(self, config: dict):
         """
 

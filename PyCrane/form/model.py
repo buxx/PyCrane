@@ -1,12 +1,11 @@
 from wtforms import StringField, validators, BooleanField, ValidationError
 from PyCrane.exception import NotFound
 
-from PyCrane.form.Form import Form
-from PyCrane.objects.Instances import Instances
+from PyCrane.form.base import Form
+from PyCrane.objects.app import Instances
 
 
 class InstanceForm(Form):
-
     name = StringField('Instance name', validators=[validators.input_required()])
     host = StringField('Host name')
     app = StringField('App model')
@@ -25,6 +24,7 @@ class InstanceForm(Form):
                                 validators.any_of(hosts_names)]
         self.image.validators = [validators.input_required(),
                                  validators.any_of(apps_images)]
+
     @staticmethod
     def validate_name(form, field):
         try:
@@ -32,4 +32,3 @@ class InstanceForm(Form):
                 raise ValidationError('{0} already exist'.format(field.data))
         except NotFound:
             pass  # name is valid if no instance
-

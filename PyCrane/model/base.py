@@ -2,7 +2,6 @@ from PyCrane.exception import ConfigurationException
 
 
 class Model:
-
     _dict_fields = []
 
     def __getattr__(self, name):

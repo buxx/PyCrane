@@ -1,9 +1,19 @@
-from PyCrane.model.Model import Model
-from PyCrane.objects.AppObjects import AppObjects
+from PyCrane.model.base import Model
+from PyCrane.objects.app import AppObjects
+
+
+class App(Model):
+    _dict_fields = [('_name', 'name'),
+                    ('_image', 'image'),
+                    ('_command', 'command')]
+
+    def __init__(self, name, image, command=None):
+        self._name = name
+        self._image = image
+        self._command = command
 
 
 class Instance(Model):
-
     _dict_fields = [('_name', 'name'),
                     ('_host', 'host'),
                     ('_app', 'app'),

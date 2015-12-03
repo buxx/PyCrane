@@ -2,12 +2,22 @@ from contextlib import contextmanager
 import os
 from compose.cli.command import project_from_options
 from yaml import dump
-from PyCrane.command.Foreman import Foreman
-from PyCrane.model.Instance import Instance
+from PyCrane.model.app import Instance
+from PyCrane.objects.host import HostObjects
+from PyCrane.objects.app import Instances
+
+
+class Foreman:
+    def __init__(self, supervisor):
+        self._supervisor = supervisor
+        self._hosts = HostObjects(supervisor.get_hosts())
+        self._instances = Instances(supervisor.get_db())
+
+    def run(self, instance: Instance):
+        raise NotImplementedError()
 
 
 class ComposeForeman(Foreman):
-
     _compose_file_name_template = 'compose_{0}.yml'
 
     _instance_repr_fields = (('image', 'image'),
@@ -30,7 +40,7 @@ class ComposeForeman(Foreman):
         # os.environ['DOCKER_TLS_VERIFY']
 
     def _clean_environ(self):
-        del(os.environ['DOCKER_HOST'])  # Keep previous value ?
+        del (os.environ['DOCKER_HOST'])  # Keep previous value ?
 
     def _dump_compose_file(self, host):
         compose_repr = {}

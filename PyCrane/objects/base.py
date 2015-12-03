@@ -2,7 +2,6 @@ from PyCrane.exception import NotFound
 
 
 class Objects:
-
     def __init__(self, collection):
         self._collection = collection
 

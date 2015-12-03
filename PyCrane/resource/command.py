@@ -1,10 +1,9 @@
-from PyCrane.command.Command import Command
-from PyCrane.objects.HostObjects import HostObjects
-from PyCrane.resource.ModelResource import ModelResource
+from PyCrane.command.command import Command
+from PyCrane.objects.host import HostObjects
+from PyCrane.resource.base import ModelResource
 
 
 class CommandResource(ModelResource):
-
     def __init__(self, supervisor, *args, **kwargs):
         super().__init__(supervisor, *args, **kwargs)
         self._command = Command(self._objects)

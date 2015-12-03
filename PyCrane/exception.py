@@ -7,7 +7,6 @@ class FatalException(PyCraneException):
 
 
 class DisplayableException(PyCraneException):
-
     def __init__(self, *args, response_content=None, **kwargs):
         super().__init__(*args, **kwargs)
         self._response_content = response_content

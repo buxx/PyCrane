@@ -1,17 +1,24 @@
 from flask import Flask
-from PyCrane.resource.Instance import Instance
-from PyCrane.resource.Instances import Instances
-from PyCrane.resource.message import ResponseError
-from PyCrane.resource.tools import contextualise_resource
-from PyCrane.server.Api import Api
-from PyCrane.resource.AppList import AppList
-from PyCrane.resource.App import App
-from PyCrane.resource.HostList import HostList
-from PyCrane.resource.Host import Host
+from flask_restful import Api as ApiBase
+from PyCrane.message import ResponseError
+from PyCrane.resource.app import AppList, App, Instances, Instance
+from PyCrane.resource.base import contextualise_resource
+from PyCrane.resource.host import HostList, Host
+
+
+class Api(ApiBase):
+    """
+    RESTFul api control.
+    TODO: Ajout des URLs de gestion
+     * des modèles d'Applications
+     * des hotes
+     * d'accès aux méthodes docker-py (avec server/hote param)
+     * d'accès aux modules (ajout dynamique!) de gest. des contenairs (docker-compose)
+    """
+    pass
 
 
 class Core(Flask):
-
     def __init__(self, supervisor, *args, **kwargs):
         super().__init__('PyCrane', *args, **kwargs)  # TODO: Conf import_name ?
         self._api = Api(self)
@@ -44,11 +51,11 @@ class Core(Flask):
 
     def get_response(self, content: dict, http_code=200, request_errors=[]):
         return {
-            'request': {
-                'errors': [error.to_dict() for error in request_errors]
-            },
-            'response': content
-        }, http_code
+                   'request': {
+                       'errors': [error.to_dict() for error in request_errors]
+                   },
+                   'response': content
+               }, http_code
 
     def get_error_response(self, error: ResponseError, http_code=400, content=None):
         return self.get_response(content, http_code, [error])

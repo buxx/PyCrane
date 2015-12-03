@@ -1,7 +1,7 @@
-from PyCrane.command.Command import Command
+from PyCrane.command.command import Command
 from PyCrane.exception import StartedBecauseShouldBeRunning
-from PyCrane.model.Instance import Instance
-from PyCrane.objects.HostObjects import HostObjects
+from PyCrane.model.app import Instance
+from PyCrane.objects.host import HostObjects
 
 
 class InstanceDispatcher:
