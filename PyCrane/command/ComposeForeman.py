@@ -54,6 +54,8 @@ class ComposeForeman(Foreman):
         if instance.get_enabled():
             instance_repr['restart'] = 'always'
 
+        instance_repr['container_name'] = instance.get_name()
+
         return instance_repr
 
     def run(self, instance: Instance):

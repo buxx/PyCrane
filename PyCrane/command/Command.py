@@ -43,12 +43,10 @@ class Command:
     def _container_exist(self, host, name, parameters={}):
         client = self._get_client(host)
         # TODO: Refact et regler le probleme de filters
-        # TODO: On pourrai decider que le name d'instance soit TOUJOURS le name du container
         containers = client.containers(all=True, **parameters)  # TODO: filters= bug ?!
         for container in containers:
-            container_id = container.get('Id')
             container_names = container.get('Names')
-            if container_id == name or name in container_names:
+            if name in container_names or '/' + name in container_names:
                 return True
         return False
 

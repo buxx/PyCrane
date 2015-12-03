@@ -38,3 +38,7 @@ class FatalDisplayableException(DisplayableException):
 
 class AlreadyRunning(NonFatalDisplayableException):
     pass
+
+
+class StartedBecauseShouldBeRunning(NonFatalDisplayableException):
+    pass

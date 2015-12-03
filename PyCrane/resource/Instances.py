@@ -5,6 +5,7 @@ from PyCrane.form.InstanceForm import InstanceForm
 from PyCrane.model.Instance import Instance
 from PyCrane.objects.AppObjects import AppObjects
 from PyCrane.resource.InstanceBase import InstanceBase
+from PyCrane.resource.message import ResponseContent
 
 
 class Instances(InstanceBase):
@@ -12,7 +13,9 @@ class Instances(InstanceBase):
     _inherited_fields = ('image', 'command')
 
     def _get_content(self):
-        return [instance.to_dict() for instance in self._instances.get_all()]
+        instances_data = [instance.to_dict() for instance in self._instances.get_all()]
+        instances_errors = self._get_instances_errors(self._instances.get_all())
+        return ResponseContent(instances_data, instances_errors)
 
     def _post_content(self):
         request_data = self._complete_request_data(request.form)
@@ -23,7 +26,7 @@ class Instances(InstanceBase):
             instance = Instance.from_dict(instance_form.data)
             self._instances.create(instance.to_dict())  # TODO: Donner Instance plutôt qur dict ?
             dispatcher.dispatch(instance)
-            return instance.to_dict()
+            return ResponseContent(instance.to_dict())
         else:
             raise InvalidPost('Invalid data provided', response_content=instance_form.errors)
 
@@ -34,10 +37,10 @@ class Instances(InstanceBase):
         :return: MultiDict
         """
         request_data = dict(request_data)
-        request_data = self._complete_request_inheriteds(request_data)
+        request_data = self._complete_request_inherited(request_data)
         return MultiDict(request_data)
 
-    def _complete_request_inheriteds(self, request_data: dict):
+    def _complete_request_inherited(self, request_data: dict):
         if not request_data.get('app'):
             return
 

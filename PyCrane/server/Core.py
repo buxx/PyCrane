@@ -1,6 +1,7 @@
 from flask import Flask
 from PyCrane.resource.Instance import Instance
 from PyCrane.resource.Instances import Instances
+from PyCrane.resource.message import ResponseError
 from PyCrane.resource.tools import contextualise_resource
 from PyCrane.server.Api import Api
 from PyCrane.resource.AppList import AppList
@@ -44,14 +45,10 @@ class Core(Flask):
     def get_response(self, content: dict, http_code=200, request_errors=[]):
         return {
             'request': {
-                'errors': request_errors
+                'errors': [error.to_dict() for error in request_errors]
             },
             'response': content
         }, http_code
 
-    def get_error_response(self, message, error_name='Error', http_code=400, content=''):
-        request_errors = [{
-            'name': error_name,
-            'message': message
-        }]
-        return self.get_response(content, http_code, request_errors)
+    def get_error_response(self, error: ResponseError, http_code=400, content=None):
+        return self.get_response(content, http_code, [error])

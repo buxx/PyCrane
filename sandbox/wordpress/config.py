@@ -25,7 +25,7 @@ APPS = [
     {
         'name': 'DEBIAN_JESSIE',
         'image': 'debian:jessie',
-        'command': 'sleep 5'
+        'command': 'sleep 30'
     }
 ]
 

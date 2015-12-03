@@ -1,5 +1,6 @@
 from PyCrane.objects.HostObjects import HostObjects
 from PyCrane.resource.ModelResource import ModelResource
+from PyCrane.resource.message import ResponseContent
 
 
 class Host(ModelResource):
@@ -9,4 +10,4 @@ class Host(ModelResource):
 
     def _get_content(self, host_name):
         host = self._objects.find_one_by_name(host_name)
-        return host.to_dict()
+        return ResponseContent(host.to_dict())
