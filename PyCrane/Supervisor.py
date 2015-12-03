@@ -3,7 +3,7 @@ from tinydb import TinyDB
 from PyCrane.command.foreman import ComposeForeman
 from PyCrane.model.app import App
 from PyCrane.model.host import Host
-from PyCrane.server.Core import Core
+from PyCrane.server import Core
 
 
 class Supervisor:

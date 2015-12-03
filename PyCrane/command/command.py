@@ -1,6 +1,6 @@
 from docker import Client
 from PyCrane.exception import AlreadyRunning
-from PyCrane.model import Instance
+from PyCrane.model.app import Instance
 
 
 class Command:

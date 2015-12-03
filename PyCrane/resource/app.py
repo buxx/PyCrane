@@ -1,18 +1,21 @@
 from flask import request
 from werkzeug.datastructures import MultiDict
+from PyCrane.command.dispatch import InstanceDispatcher
 
 from PyCrane.exception import NonFatalDisplayableException, InvalidPost
 from PyCrane.form.model import InstanceForm
-from PyCrane.model.app import Instance
-from PyCrane.objects.app import AppObjects
-from PyCrane.resource.base import InstanceBase, ModelResource
-from PyCrane.resource.ModelResource import ModelResource
+from PyCrane.model.app import Instance as InstanceModel
+from PyCrane.objects.apps import Apps
+from PyCrane.objects.host import HostObjects
+from PyCrane.resource.base import ModelResource
 from PyCrane.message import ResponseContent, ResponseError
+from PyCrane.resource.command import CommandResource
+from PyCrane.objects.apps import Instances as InstancesObjects
 
 
 class App(ModelResource):
     def _model_collection(self):
-        return AppObjects(self._get_supervisor().get_apps())
+        return Apps(self._get_supervisor().get_apps())
 
     def _get_content(self, app_name):
         app = self._objects.find_one_by_name(app_name)
@@ -21,10 +24,37 @@ class App(ModelResource):
 
 class AppList(ModelResource):
     def _model_collection(self):
-        return AppObjects(self._get_supervisor().get_apps())
+        return Apps(self._get_supervisor().get_apps())
 
     def _get_content(self):
         return ResponseContent([app.to_dict() for app in self._objects.get_collection()])
+
+
+class InstanceBase(CommandResource):
+    def __init__(self, supervisor, *args, **kwargs):
+        super().__init__(supervisor, *args, **kwargs)
+        self._instances = InstancesObjects(supervisor.get_db())
+
+    def _model_collection(self):
+        return HostObjects(self._get_supervisor().get_hosts())
+
+    def _get_dispatcher(self, instance=None):
+        """
+
+        :param instance: Instance object if already exist
+        :return:
+        """
+        return InstanceDispatcher(self._supervisor, instance)
+
+    def _get_instances_errors(self, instances):
+        errors = []
+        for instance in instances:
+            if not self._command.is_running(instance):
+                not_running_error = ResponseError('Instance not running',
+                                                  "Instance {0} is not running".format(instance.get_name()),
+                                                  instance.get_name())
+                errors.append(not_running_error)
+        return errors
 
 
 class Instance(InstanceBase):
@@ -69,7 +99,7 @@ class Instances(InstanceBase):
         dispatcher = self._get_dispatcher(None)
 
         if instance_form.validate():
-            instance = Instance.from_dict(instance_form.data)
+            instance = InstanceModel.from_dict(instance_form.data)
             self._instances.create(instance.to_dict())  # TODO: Donner Instance plutôt qur dict ?
             dispatcher.dispatch(instance)
             return ResponseContent(instance.to_dict())
@@ -91,7 +121,7 @@ class Instances(InstanceBase):
             return
 
         instance_app_name = request_data.get('app')[0]
-        apps = AppObjects(self._get_supervisor().get_apps())
+        apps = Apps(self._get_supervisor().get_apps())
         app = apps.find_one_by_name(instance_app_name)
 
         for inherited_field_name in self._inherited_fields:

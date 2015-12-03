@@ -1,5 +1,4 @@
 from PyCrane.model.base import Model
-from PyCrane.objects.app import AppObjects
 
 
 class App(Model):
@@ -32,10 +31,6 @@ class Instance(Model):
     @property
     def enabled(self):
         return self._enabled
-
-    def _get_image_name_from_app(self, app_name):
-        apps = AppObjects(self._get_supervisor().get_apps())
-        return apps.find_one_by_name(app_name).get_image()
 
     def get_enabled(self):
         """

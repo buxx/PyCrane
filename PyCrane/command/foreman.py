@@ -2,9 +2,8 @@ from contextlib import contextmanager
 import os
 from compose.cli.command import project_from_options
 from yaml import dump
-from PyCrane.model.app import Instance
 from PyCrane.objects.host import HostObjects
-from PyCrane.objects.app import Instances
+from PyCrane.objects.apps import Instances
 
 
 class Foreman:
@@ -13,7 +12,7 @@ class Foreman:
         self._hosts = HostObjects(supervisor.get_hosts())
         self._instances = Instances(supervisor.get_db())
 
-    def run(self, instance: Instance):
+    def run(self, instance):
         raise NotImplementedError()
 
 
@@ -54,7 +53,7 @@ class ComposeForeman(Foreman):
 
         return host_compose_file_path
 
-    def _instance_repr(self, instance: Instance):
+    def _instance_repr(self, instance):
         instance_repr = {}
         for repr_name, field_name in self._instance_repr_fields:
             field_value = getattr(instance, "get_{0}".format(field_name))()
@@ -68,7 +67,7 @@ class ComposeForeman(Foreman):
 
         return instance_repr
 
-    def run(self, instance: Instance):
+    def run(self, instance):
         """
         TODO: Si tourne deja, raise, sinon, get_project.up
         :param instance:
@@ -78,7 +77,7 @@ class ComposeForeman(Foreman):
         with self._get_project(host) as project:
             project.up([instance.get_name()], detached=True)  # detached: création d'un démon ?
 
-    def stop(self, instance: Instance):
+    def stop(self, instance):
         host = self._hosts.find_one_by_name(instance.get_host())
         with self._get_project(host) as project:
             project.stop([instance.get_name()])

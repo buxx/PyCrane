@@ -2,7 +2,7 @@ from wtforms import StringField, validators, BooleanField, ValidationError
 from PyCrane.exception import NotFound
 
 from PyCrane.form.base import Form
-from PyCrane.objects.app import Instances
+from PyCrane.objects.apps import Instances
 
 
 class InstanceForm(Form):
