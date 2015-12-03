@@ -9,6 +9,8 @@ from PyCrane.resource.InstanceBase import InstanceBase
 
 class Instances(InstanceBase):
 
+    _inherited_fields = ('image', 'command')
+
     def _get_content(self):
         return [instance.to_dict() for instance in self._instances.get_all()]
 
@@ -25,17 +27,27 @@ class Instances(InstanceBase):
         else:
             raise InvalidPost('Invalid data provided', response_content=instance_form.errors)
 
-    def _complete_request_data(self, request_data):
+    def _complete_request_data(self, request_data) -> MultiDict:
         """
         Replace 'image' by model app image name if not set
         :param request_data: dict of request.data (or equivalent)
-        :return:
+        :return: MultiDict
         """
         request_data = dict(request_data)
-        if not request_data.get('image') and request_data.get('app'):
-            apps = AppObjects(self._get_supervisor().get_apps())
-            instance_app_name = request_data.get('app')[0]
-            instance_image_name = apps.find_one_by_name(instance_app_name).get_image()
-            request_data['image'] = [instance_image_name]
-
+        request_data = self._complete_request_inheriteds(request_data)
         return MultiDict(request_data)
+
+    def _complete_request_inheriteds(self, request_data: dict):
+        if not request_data.get('app'):
+            return
+
+        instance_app_name = request_data.get('app')[0]
+        apps = AppObjects(self._get_supervisor().get_apps())
+        app = apps.find_one_by_name(instance_app_name)
+
+        for inherited_field_name in self._inherited_fields:
+            if not request_data.get(inherited_field_name):
+                inherited_value = getattr(app, "get_{0}".format(inherited_field_name))()
+                request_data[inherited_field_name] = [inherited_value]
+
+        return request_data

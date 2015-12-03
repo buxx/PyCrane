@@ -8,7 +8,10 @@ from PyCrane.model.Instance import Instance
 
 class ComposeForeman(Foreman):
 
-    compose_file_name_template = 'compose_{0}.yml'
+    _compose_file_name_template = 'compose_{0}.yml'
+
+    _instance_repr_fields = (('image', 'image'),
+                             ('command', 'command'))
 
     @contextmanager
     def _get_project(self, host):
@@ -31,7 +34,7 @@ class ComposeForeman(Foreman):
 
     def _dump_compose_file(self, host):
         compose_repr = {}
-        host_compose_file_path = self.compose_file_name_template.format(host.get_name())
+        host_compose_file_path = self._compose_file_name_template.format(host.get_name())
 
         for instance in self._instances.find_by_host(host):
             compose_repr[instance.get_name()] = self._instance_repr(instance)
@@ -42,10 +45,12 @@ class ComposeForeman(Foreman):
         return host_compose_file_path
 
     def _instance_repr(self, instance: Instance):
-        instance_repr = {
-            'image': instance.get_image(),
+        instance_repr = {}
+        for repr_name, field_name in self._instance_repr_fields:
+            field_value = getattr(instance, "get_{0}".format(field_name))()
+            if field_value:
+                instance_repr[repr_name] = field_value
 
-        }
         if instance.get_enabled():
             instance_repr['restart'] = 'always'
 

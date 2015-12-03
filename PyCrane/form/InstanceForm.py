@@ -12,6 +12,7 @@ class InstanceForm(Form):
     app = StringField('App model')
     image = StringField('Image name', validators=[validators.input_required()])
     enabled = BooleanField('Is working', validators=[validators.input_required()])
+    command = StringField('Command')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

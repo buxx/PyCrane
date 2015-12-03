@@ -21,6 +21,11 @@ APPS = [
         'name': 'MYSQL_5.7',
         'image': 'mysql:5.7',
         # TODO: methode de deploiement / callback
+    },
+    {
+        'name': 'DEBIAN_JESSIE',
+        'image': 'debian:jessie',
+        'command': 'sleep 5'
     }
 ]
 

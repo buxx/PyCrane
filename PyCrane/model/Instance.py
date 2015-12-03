@@ -8,14 +8,16 @@ class Instance(Model):
                     ('_host', 'host'),
                     ('_app', 'app'),
                     ('_enabled', 'enabled'),
-                    ('_image', 'image')]
+                    ('_image', 'image'),
+                    ('_command', 'command')]
 
-    def __init__(self, host, app, enabled, image, name):
+    def __init__(self, host, app, enabled, image, name, command=None):
         self._host = host
         self._app = app
         self._enabled = enabled
         self._image = image
         self._name = name
+        self._command = command
 
     @property
     def enabled(self):
