@@ -32,4 +32,9 @@ APPS = [
 wordpress_deployment_config = {
     'HOSTS': HOSTS,
     'APPS': APPS,
+    'server': {
+        'host': '127.0.0.1',
+        'port': 5000,
+        'debug': True
+    }
 }
