@@ -1,4 +1,6 @@
 from tinydb import Query
+from typing import List
+
 from PyCrane.exception import NotFound
 from PyCrane.model.host import Host
 from PyCrane.model.app import Instance
@@ -22,7 +24,11 @@ class Instances:
     def get_all(self) -> list:
         return [Instance.from_dict(instance_data) for instance_data in self._database.all()]
 
-    def find_by_host(self, host: Host) -> list:  # TODO: typehint [Instance]
+    def find_by_host(self, host: Host) -> List[Instance]:
+        """
+        :param host: host instance filter
+        :return: list of instances
+        """
         return [Instance.from_dict(data) for data in self._database.search(self._instances.host == host.get_name())]
 
     def create(self, data: dict):
