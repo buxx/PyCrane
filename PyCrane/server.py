@@ -1,6 +1,10 @@
 from flask import Flask
 from flask_restful import Api as ApiBase
+from tinydb import TinyDB
+from PyCrane.command.foreman import ComposeForeman
 from PyCrane.message import ResponseError
+from PyCrane.model.app import App as AppModel
+from PyCrane.model.host import Host as HostModel
 from PyCrane.resource.app import AppList, App, Instances, Instance
 from PyCrane.resource.base import contextualise_resource
 from PyCrane.resource.host import HostList, Host
@@ -59,3 +63,46 @@ class Core(Flask):
 
     def get_error_response(self, error: ResponseError, http_code=400, content=None):
         return self.get_response(content, http_code, [error])
+
+
+class Supervisor:
+    def __init__(self, config: dict):
+        """
+
+        :param config: dict config TODO: link to doc
+        :return:
+        """
+        self._apps = [AppModel.from_dict(app_data) for app_data in config['APPS']]
+        self._hosts = [HostModel.from_dict(host_data) for host_data in config['HOSTS']]
+        self._core = Core(self)
+        self._core.build_resources()
+        self._db = self._get_database(config)
+        self._config = config
+
+    def _get_database(self, config):
+        return TinyDB('./db.json')  # TODO: config
+
+    def set_apps(self, apps: list):  # TODO: type dans liste
+        self._apps = apps
+
+    def get_apps(self) -> list:  # TODO: type dans liste
+        return self._apps
+
+    def set_hosts(self, hosts: list):  # TODO: type dans liste
+        self._hosts = hosts
+
+    def get_hosts(self) -> list:  # TODO: type dans liste
+        return self._hosts
+
+    def get_core(self):
+        return self._core
+
+    def get_db(self) -> TinyDB:
+        return self._db
+
+    def get_foreman_class(self):
+        return ComposeForeman
+
+    def start_server(self):
+        # TODO: parametres hos etc en argv
+        self._core.run(host='127.0.0.1', port=5000, debug=True)

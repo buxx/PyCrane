@@ -1,7 +1,7 @@
 import sys
 sys.path.append('../../')
 
-from PyCrane.Supervisor import Supervisor
+from PyCrane.server import Supervisor
 from sandbox.wordpress.config import wordpress_deployment_config
 
 
