@@ -39,11 +39,29 @@ APPS = [
     }
 ]
 
-wordpress_deployment_config = {
+config = {
     'HOSTS': HOSTS,
     'APPS': APPS,
+    'server': {
+        'host': '127.0.0.1',
+        'port': 5000,
+        'debug': True
+    }
 }
 ```
+
+Then run PyCrane server with somthing like this **run.py**:
+
+```
+from PyCrane.server import Supervisor
+
+
+supervisor = Supervisor(config)
+supervisor.start_server()
+
+```
+
+```python3 run.py```
 
 At this point, no container is running on HOST_A:
 
