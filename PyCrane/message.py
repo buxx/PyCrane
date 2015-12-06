@@ -1,4 +1,7 @@
 class ResponseContent:
+    """
+    Standardised response content
+    """
     def __init__(self, content, errors=[]):
         self._content = content
         self._errors = errors
@@ -11,6 +14,9 @@ class ResponseContent:
 
 
 class ResponseError:
+    """
+    Standardised error
+    """
     def __init__(self, name, message, content=None):
         self._name = name
         self._message = message
