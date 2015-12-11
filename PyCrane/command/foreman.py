@@ -20,7 +20,9 @@ class ComposeForeman(Foreman):
     _compose_file_name_template = 'compose_{0}.yml'
 
     _instance_repr_fields = (('image', 'image'),
-                             ('command', 'command'))
+                             ('command', 'command'),
+                             ('volumes', 'volumes'),
+                             ('ports', 'ports'))
 
     @contextmanager
     def _get_project(self, host):

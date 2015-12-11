@@ -1,3 +1,5 @@
+from sandbox.wordpress.process import WordpressInstanciate
+
 HOSTS = [
     {
         'name': 'HOST_A',
@@ -15,12 +17,11 @@ APPS = [
     {
         'name': 'WORDPRESS_4.3',
         'image': 'wordpress:4.3-apache',
-        # TODO: methode de deploiement / callback
+        'instanciate': WordpressInstanciate,
     },
     {
         'name': 'MYSQL_5.7',
         'image': 'mysql:5.7',
-        # TODO: methode de deploiement / callback
     },
     {
         'name': 'DEBIAN_JESSIE',

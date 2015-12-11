@@ -7,10 +7,12 @@ from PyCrane.form.model import InstanceForm
 from PyCrane.model.app import Instance as InstanceModel
 from PyCrane.objects.apps import Apps
 from PyCrane.objects.host import HostObjects
+from PyCrane.process import Instanciate
 from PyCrane.resource.base import ModelResource
 from PyCrane.message import ResponseContent, ResponseError
 from PyCrane.resource.command import CommandResource
 from PyCrane.objects.apps import Instances as InstancesObjects
+from PyCrane.model.app import App as AppModel
 
 
 class App(ModelResource):
@@ -100,8 +102,14 @@ class Instances(InstanceBase):
 
         if instance_form.validate():
             instance = InstanceModel.from_dict(instance_form.data)
+            instanciate = self._instanciate(instance, request_data)
             self._instances.create(instance.to_dict())  # TODO: Donner Instance plutôt qur dict ?
-            dispatcher.dispatch(instance)
+            try:
+                dispatcher.dispatch(instance)
+                instanciate.success()
+            except Exception:  # TODO: Aller mettre des raise dans .dispatch
+                instanciate.fail()
+                raise
             return ResponseContent(instance.to_dict())
         else:
             raise InvalidPost('Invalid data provided', response_content=instance_form.errors)
@@ -130,3 +138,14 @@ class Instances(InstanceBase):
                 request_data[inherited_field_name] = [inherited_value]
 
         return request_data
+
+    def _instanciate(self, instance, request_data) -> Instanciate:
+        if not instance.get_app():
+            return
+
+        apps = Apps(self._get_supervisor().get_apps())
+        app = apps.find_one_by_name(instance.get_app())
+
+        instanciate = app.get_instanciate()(self._supervisor, app, instance, request_data)
+        instanciate.update_instance(instance)
+        return instanciate
